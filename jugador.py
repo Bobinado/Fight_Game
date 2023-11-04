@@ -6,6 +6,7 @@ class Personaje():
         self.rect = pygame.Rect((x, y, 100, 100))
         self.vel_y = 0
         self.salto = False
+        self.atacando = False
         self.tipo_ataque = 0
   
     #MOVIMIENTOS
@@ -16,23 +17,30 @@ class Personaje():
         dy = 0
         key=pygame.key.get_pressed()
 
-        #Movimiento
-        if key[pygame.K_a]:
-            dx=-velocidad
-        if key[pygame.K_d]:
-            dx=velocidad
+        #Solo moverse si no está atacando
+        if self.atacando == False:
+            #Movimiento
+            if key[pygame.K_a]:
+                dx=-velocidad
+            if key[pygame.K_d]:
+                dx=velocidad
 
-        #Salto y gravedad
-        if key[pygame.K_w] and self.salto==False:
-            self.salto = True
-            self.vel_y = -25
-        
-        self.vel_y += gravedad
-        dy += self.vel_y
+            #Salto y gravedad
+            if key[pygame.K_w] and self.salto==False:
+                self.salto = True
+                self.vel_y = -25
+            
+            self.vel_y += gravedad
+            dy += self.vel_y
 
-        #Ataques
-        if key[pygame.K_c] or key[pygame.K_v]:
-            self.atacar(superficie, objetivo)
+            #Ataques
+            if key[pygame.K_c] or key[pygame.K_v]:
+                self.atacando = False
+                self.atacar(superficie, objetivo)
+                if key[pygame.K_c]:
+                    self.tipo_ataque = 1
+                if key[pygame.K_v]:
+                    self.tipo_ataque = 2
 
 
 
@@ -52,6 +60,7 @@ class Personaje():
         self.rect.y+=dy
 
     def atacar(self, superficie, objetivo):
+        self.atacando = True
         atacante_rect = pygame.Rect(self.rect.centerx, self.rect.y, 2 * self.rect.width, self.rect.height)
         if atacante_rect.colliderect(objetivo.rect):
             print("golpe")

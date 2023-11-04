@@ -14,8 +14,8 @@ def dibujar_fondo():
     screen.blit(fondo,(0,0))
 
 #JUGADORES
-P1= Personaje(150,200)
-P2= Personaje(200,300)
+P1= Personaje(100,150)
+P2= Personaje(600,150)
 
 #Frame Rate
 clock=pygame.time.Clock()
