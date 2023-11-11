@@ -2,18 +2,40 @@ import pygame
 from jugador import Personaje
 pygame.init()
 
-#CONFIGURACION DE LA VENTANA
+#Configuración de la ventana
 alto=600
 largo=800
 screen=pygame.display.set_mode((largo,alto)) #PANTALLA
-pygame.display.set_caption("nombre")
+pygame.display.set_caption("No se que nombre poner todavia lol")
+icon = pygame.image.load("icon.png").convert_alpha()
+pygame.display.set_icon(icon)
 
-#CONFIGURACIÓN DEL FONDO
+#Configuración del fondo
 fondo=pygame.image.load("fondos/fondo.png").convert_alpha()
 def dibujar_fondo():
     screen.blit(fondo,(0,0))
 
-#BARRAS DE VIDA
+#Cargar sprites de jugadores
+jugador1_sheet = pygame.image.load("sprites_jugador/player_1.png")
+jugador2_sheet = pygame.image.load("sprites_jugador/player_2.png")
+
+#Número de pasos en cada animación
+jugador1_pasos = [1, 12, 3, 3, 4]
+jugador2_pasos = [1, 12, 3, 3, 4]
+
+#variables del jugador
+jugador1_tamaño = 64
+jugador1_escala = 4
+jugador1_offset = [18, 20]
+jugador1_data = [jugador1_tamaño, jugador1_escala, jugador1_offset]
+
+jugador2_tamaño = 64
+jugador2_escala = 4
+jugador2_offset = [18, 20]
+jugador2_data = [jugador2_tamaño, jugador2_escala, jugador2_offset]
+
+
+#Barras de vida
 rojo = (255, 0, 0)
 amarillo = (255, 255, 0)
 blanco = (255, 255, 255)
@@ -24,8 +46,8 @@ def dibujar_vida(vida, x, y):
 
 
 #Jugadores
-P1= Personaje(100,150)
-P2= Personaje(600,150)
+P1= Personaje(100, 150, False, jugador1_data, jugador1_sheet, jugador1_pasos)
+P2= Personaje(600, 150, False, jugador2_data, jugador2_sheet, jugador2_pasos)
 
 #Frame Rate
 clock=pygame.time.Clock()
@@ -39,16 +61,22 @@ while run:
 
     dibujar_fondo()
 
+    #dibujar barras
     dibujar_vida(P1.vida, 10, 10)
     dibujar_vida(P2.vida, 440, 10)
 
+    #movimiento de personajes
     P1.mover(largo, alto, screen, P2)
     #P2.mover(largo, alto)
+    
+    #actualizar jugadores
+    P1.actualizar()
+    P2.actualizar()
 
+
+    #dibujar jugadores
     P1.dibujar(screen)
     P2.dibujar(screen)
-
-    
 
 
     for event in pygame.event.get():
