@@ -6,7 +6,7 @@ pygame.init()
 alto=600
 largo=800
 screen=pygame.display.set_mode((largo,alto)) #PANTALLA
-pygame.display.set_caption("No se que nombre poner todavia lol")
+pygame.display.set_caption("Fight Game")
 icon = pygame.image.load("icon.png").convert_alpha()
 pygame.display.set_icon(icon)
 
