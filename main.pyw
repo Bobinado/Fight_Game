@@ -20,18 +20,18 @@ jugador1_sheet = pygame.image.load("sprites_jugador/player_1.png")
 jugador2_sheet = pygame.image.load("sprites_jugador/player_2.png")
 
 #Número de pasos en cada animación
-jugador1_pasos = [1, 12, 3, 3, 4]
-jugador2_pasos = [1, 12, 3, 3, 4]
+jugador1_pasos = [1, 12, 1, 3, 4]
+jugador2_pasos = [1, 12, 1, 3, 4]
 
 #variables del jugador
 jugador1_tamaño = 64
 jugador1_escala = 4
-jugador1_offset = [18, 20]
+jugador1_offset = [20, 19]
 jugador1_data = [jugador1_tamaño, jugador1_escala, jugador1_offset]
 
 jugador2_tamaño = 64
 jugador2_escala = 4
-jugador2_offset = [18, 20]
+jugador2_offset = [20, 19]
 jugador2_data = [jugador2_tamaño, jugador2_escala, jugador2_offset]
 
 
@@ -47,7 +47,7 @@ def dibujar_vida(vida, x, y):
 
 #Jugadores
 P1= Personaje(100, 150, False, jugador1_data, jugador1_sheet, jugador1_pasos)
-P2= Personaje(600, 150, False, jugador2_data, jugador2_sheet, jugador2_pasos)
+P2= Personaje(600, 150, True, jugador2_data, jugador2_sheet, jugador2_pasos)
 
 #Frame Rate
 clock=pygame.time.Clock()

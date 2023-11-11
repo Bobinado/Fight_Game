@@ -8,12 +8,13 @@ class Personaje():
         self.offset = data[2]
         self.direccion = direccion
         self.lista_animacion = self.cargar_imagenes(hoja_sprites, pasos_animacion)
-        self.accion = 0 #0:idle 1:correr 2:saltar 3:atacar1 4:atacar2 5:muerte
+        self.accion = 0 #0:idle 1:atacar 2:saltar 3:atacar1 4:atacar2 5:muerte
         self.frame_index = 0
         self.imagen = self.lista_animacion[self.accion][self.frame_index]
         self.actualizacion = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 100, 125))
         self.vel_y = 0
+        self.corriendo = False
         self.salto = False
         self.atacando = False
         self.tipo_ataque = 0
@@ -35,14 +36,17 @@ class Personaje():
         gravedad = 1
         dx = 0
         dy = 0
+        self.corriendo = False
         key=pygame.key.get_pressed()
 
         #Solo moverse si no está atacando
         if self.atacando == False:
             #Movimiento
             if key[pygame.K_a]:
+                self.corriendo = True
                 dx=-velocidad
             if key[pygame.K_d]:
+                self.corriendo = True
                 dx=velocidad
 
             #Salto y gravedad
@@ -80,16 +84,27 @@ class Personaje():
 
         #Mantener a los personajes opuestos entre sí
         if objetivo.rect.centerx > self.rect.centerx:
-            self.direccion = True
-        else: 
             self.direccion = False
+        else: 
+            self.direccion = True
 
     #Actualizacion de animaciones
     def actualizar(self):
-        animacion_cooldown = 500
-        self.imagen = self.lista_animacion[self.accion][self.frame_index] #actualiza la imagen
+        #determinar que sprites necesita cada accion
+        if self.salto == True: 
+            self.actualizar_accion(2)
+
+        elif self.corriendo == True:
+            self.actualizar_accion(3)
+
+        else: 
+            self.actualizar_accion(0)
+
+        animacion_cooldown = 100
+        #actualiza la imagen
+        self.imagen = self.lista_animacion[self.accion][self.frame_index] 
         if pygame.time.get_ticks() - self.actualizacion > animacion_cooldown: #asegurar si paso tiempo suficiente desde la ultima actualización
-            self.frame_index -= 10
+            self.frame_index += 1
             self.actualizacion = pygame.time.get_ticks()
         if self.frame_index >=len(self.lista_animacion[self.accion]):
             self.frame_index = 0
@@ -102,6 +117,14 @@ class Personaje():
         
         
         pygame.draw.rect(superficie, (0, 255, 0), atacante_rect )
+    
+    #NUEVAS ACCIONES
+    def actualizar_accion(self, nueva_accion):
+        #determinar si la nueva accion es diferente a la anterior
+        if nueva_accion != self.accion:
+            self.accion = nueva_accion
+            self.frame_index = 0
+            self.actualizacion = pygame.time.get_ticks() 
 
     #DIBUJAR LOS PERSONAJES
     def dibujar(self,superficie):
