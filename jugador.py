@@ -8,7 +8,7 @@ class Personaje():
         self.offset = data[2]
         self.direccion = direccion
         self.lista_animacion = self.cargar_imagenes(hoja_sprites, pasos_animacion)
-        self.accion = 0 #0:idle 1:atacar 2:saltar 3:atacar1 4:atacar2 5:muerte
+        self.accion = 0 #0:idle 1:atacar 2:saltar 3:correr 4: muerte: 5:daño
         self.frame_index = 0
         self.imagen = self.lista_animacion[self.accion][self.frame_index]
         self.actualizacion = pygame.time.get_ticks()
@@ -20,7 +20,8 @@ class Personaje():
         self.tipo_ataque = 0
         self.cooldown_ataque = 0
         self.golpe = False
-        self.vida = 100
+        self.vivo = True
+        self.vida = 10
     
     def cargar_imagenes(self, hoja_sprites, pasos_animacion):
         lista_animacion = []
@@ -99,9 +100,15 @@ class Personaje():
     #Actualizacion de animaciones
     def actualizar(self):
         #determinar que sprites necesita cada accion
-        if self.golpe == True: 
-            self.actualizar_accion(5)
-        elif self.atacando == True: 
+        if self.vida <= 0: 
+            self.vida = 0
+            self.vivo = False 
+            self.actualizar_accion(4) #Muerto
+
+        elif self.golpe == True: 
+            self.actualizar_accion(5) #Golpe o daño
+
+        elif self.atacando == True:  
             if self.tipo_ataque == 1:
                 self.actualizar_accion(1) #Ataque 1
             elif self.tipo_ataque == 2:
@@ -117,6 +124,7 @@ class Personaje():
             self.actualizar_accion(0) #Idle
 
         animacion_cooldown = 20
+
         #actualiza la imagen
         self.imagen = self.lista_animacion[self.accion][self.frame_index] 
 
@@ -124,8 +132,11 @@ class Personaje():
         if pygame.time.get_ticks() - self.actualizacion > animacion_cooldown: 
             self.frame_index += 1
             self.actualizacion = pygame.time.get_ticks()
+
+        #asegurar si la animación terminó
         if self.frame_index >=len(self.lista_animacion[self.accion]):
             self.frame_index = 0
+           
             #asegurar si el ataque se realizó
             if self.accion == 1: 
                 self.atacando = False
