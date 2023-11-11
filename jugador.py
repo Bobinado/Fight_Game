@@ -18,6 +18,8 @@ class Personaje():
         self.salto = False
         self.atacando = False
         self.tipo_ataque = 0
+        self.cooldown_ataque = 0
+        self.golpe = False
         self.vida = 100
     
     def cargar_imagenes(self, hoja_sprites, pasos_animacion):
@@ -37,6 +39,8 @@ class Personaje():
         dx = 0
         dy = 0
         self.corriendo = False
+        self.tipo_ataque = 0
+
         key=pygame.key.get_pressed()
 
         #Solo moverse si no está atacando
@@ -87,36 +91,60 @@ class Personaje():
             self.direccion = False
         else: 
             self.direccion = True
+        
+        #Cooldown de ataque
+        if self.cooldown_ataque > 0:
+            self.cooldown_ataque -= 1
 
     #Actualizacion de animaciones
     def actualizar(self):
         #determinar que sprites necesita cada accion
-        if self.salto == True: 
-            self.actualizar_accion(2)
+        if self.golpe == True: 
+            self.actualizar_accion(5)
+        elif self.atacando == True: 
+            if self.tipo_ataque == 1:
+                self.actualizar_accion(1) #Ataque 1
+            elif self.tipo_ataque == 2:
+                self.actualizar_accion(1) #Ataque 2
+
+        elif self.salto == True: 
+            self.actualizar_accion(2) #Saltando
 
         elif self.corriendo == True:
-            self.actualizar_accion(3)
+            self.actualizar_accion(3) #Corriendo
 
         else: 
-            self.actualizar_accion(0)
+            self.actualizar_accion(0) #Idle
 
-        animacion_cooldown = 100
+        animacion_cooldown = 20
         #actualiza la imagen
         self.imagen = self.lista_animacion[self.accion][self.frame_index] 
-        if pygame.time.get_ticks() - self.actualizacion > animacion_cooldown: #asegurar si paso tiempo suficiente desde la ultima actualización
+
+        #asegurar si paso tiempo suficiente desde la ultima actualización
+        if pygame.time.get_ticks() - self.actualizacion > animacion_cooldown: 
             self.frame_index += 1
             self.actualizacion = pygame.time.get_ticks()
         if self.frame_index >=len(self.lista_animacion[self.accion]):
             self.frame_index = 0
+            #asegurar si el ataque se realizó
+            if self.accion == 1: 
+                self.atacando = False
+                self.cooldown_ataque = 30
+            #asegurar si se tomó daño
+            if self.accion == 5: 
+                self.golpe = False
+                self.atacando = False
+                self.cooldown_ataque = 30
 
     def atacar(self, superficie, objetivo):
-        self.atacando = True
-        atacante_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.direccion) , self.rect.y, 2 * self.rect.width, self.rect.height)
-        if atacante_rect.colliderect(objetivo.rect):
-            objetivo.vida -=5
+        if self.cooldown_ataque == 0:
+            self.atacando = True
+            atacante_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.direccion) , self.rect.y, 2 * self.rect.width, self.rect.height)
+            if atacante_rect.colliderect(objetivo.rect):
+                objetivo.vida -=5
+                objetivo.golpe = True
         
-        
-        pygame.draw.rect(superficie, (0, 255, 0), atacante_rect )
+            pygame.draw.rect(superficie, (0, 255, 0), atacante_rect )
     
     #NUEVAS ACCIONES
     def actualizar_accion(self, nueva_accion):

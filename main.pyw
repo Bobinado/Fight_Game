@@ -20,8 +20,8 @@ jugador1_sheet = pygame.image.load("sprites_jugador/player_1.png")
 jugador2_sheet = pygame.image.load("sprites_jugador/player_2.png")
 
 #Número de pasos en cada animación
-jugador1_pasos = [1, 12, 1, 3, 4]
-jugador2_pasos = [1, 12, 1, 3, 4]
+jugador1_pasos = [1, 12, 1, 3, 4, 4]
+jugador2_pasos = [1, 12, 1, 3, 4, 4]
 
 #variables del jugador
 jugador1_tamaño = 64
