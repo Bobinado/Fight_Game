@@ -14,6 +14,15 @@ pygame.display.set_icon(icon)
 fondo=pygame.image.load("fondos/fondo.png").convert_alpha()
 def dibujar_fondo():
     screen.blit(fondo,(0,0))
+#Colores
+rojo = (255, 0, 0)
+amarillo = (255, 255, 0)
+blanco = (255, 255, 255)
+
+#Intro
+intro = 3
+outro_actualizacion = pygame.time.get_ticks()
+
 
 #Cargar sprites de jugadores
 jugador1_sheet = pygame.image.load("sprites_jugador/player_1.png")
@@ -36,9 +45,6 @@ jugador2_data = [jugador2_tamaño, jugador2_escala, jugador2_offset]
 
 
 #Barras de vida
-rojo = (255, 0, 0)
-amarillo = (255, 255, 0)
-blanco = (255, 255, 255)
 def dibujar_vida(vida, x, y):
     relacion = vida / 100
     pygame.draw.rect(screen, rojo, (x, y, 350, 20))
@@ -46,8 +52,8 @@ def dibujar_vida(vida, x, y):
 
 
 #Jugadores
-P1= Personaje(100, 150, False, jugador1_data, jugador1_sheet, jugador1_pasos)
-P2= Personaje(600, 150, True, jugador2_data, jugador2_sheet, jugador2_pasos)
+P1= Personaje(1, 100, 150, False, jugador1_data, jugador1_sheet, jugador1_pasos)
+P2= Personaje(2, 600, 150, True, jugador2_data, jugador2_sheet, jugador2_pasos)
 
 #Frame Rate
 clock=pygame.time.Clock()
@@ -65,14 +71,20 @@ while run:
     dibujar_vida(P1.vida, 10, 10)
     dibujar_vida(P2.vida, 440, 10)
 
-    #movimiento de personajes
-    P1.mover(largo, alto, screen, P2)
-    #P2.mover(largo, alto)
+    #cuenta regresiva (intro)
+    if intro <= 0:
+        #Movimiento
+        P1.mover(largo, alto, screen, P2)
+        P2.mover(largo, alto, screen, P1)
+    else: 
+        if (pygame.time.get_ticks() - outro_actualizacion) >= 1000:
+            intro -= 1
+            outro_actualizacion = pygame.time.get_ticks()
+            print(intro)
     
     #actualizar jugadores
     P1.actualizar()
     P2.actualizar()
-
 
     #dibujar jugadores
     P1.dibujar(screen)

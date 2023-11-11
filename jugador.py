@@ -2,7 +2,8 @@ import pygame
 class Personaje():
     
     #CREAR LOS PERSONAJES
-    def __init__(self, x, y, direccion, data, hoja_sprites, pasos_animacion):
+    def __init__(self, jugador, x, y, direccion, data, hoja_sprites, pasos_animacion):
+        self.jugador = jugador
         self.tamaño = data[0]
         self.escala_imagen = data[1]
         self.offset = data[2]
@@ -21,7 +22,7 @@ class Personaje():
         self.cooldown_ataque = 0
         self.golpe = False
         self.vivo = True
-        self.vida = 10
+        self.vida = 100
     
     def cargar_imagenes(self, hoja_sprites, pasos_animacion):
         lista_animacion = []
@@ -45,31 +46,60 @@ class Personaje():
         key=pygame.key.get_pressed()
 
         #Solo moverse si no está atacando
-        if self.atacando == False:
-            #Movimiento
-            if key[pygame.K_a]:
-                self.corriendo = True
-                dx=-velocidad
-            if key[pygame.K_d]:
-                self.corriendo = True
-                dx=velocidad
+        if self.atacando == False and self.vivo == True:
+            #determinar los controles del jugador 1
+            #JUGADOR 1
+            if self.jugador == 1: 
+                    
+                #Movimiento
+                if key[pygame.K_a]:
+                    self.corriendo = True
+                    dx=-velocidad
+                if key[pygame.K_d]:
+                    self.corriendo = True
+                    dx=velocidad
 
-            #Salto y gravedad
-            if key[pygame.K_w] and self.salto==False:
-                self.salto = True
-                self.vel_y = -25
-            
-            self.vel_y += gravedad
-            dy += self.vel_y
+                #Salto y gravedad
+                if key[pygame.K_w] and self.salto==False:
+                    self.salto = True
+                    self.vel_y = -25
+                
+                self.vel_y += gravedad
+                dy += self.vel_y
 
-            #Ataques
-            if key[pygame.K_c] or key[pygame.K_v]:
-                self.atacar(superficie, objetivo)
-                if key[pygame.K_c]:
-                    self.tipo_ataque = 1
-                if key[pygame.K_v]:
-                    self.tipo_ataque = 2
+                #Ataques
+                if key[pygame.K_c] or key[pygame.K_v]:
+                    self.atacar(superficie, objetivo)
+                    if key[pygame.K_c]:
+                        self.tipo_ataque = 1
+                    if key[pygame.K_v]:
+                        self.tipo_ataque = 2
+            #JUGADOR 2
+            if self.jugador == 2: 
+                    
+                #Movimiento
+                if key[pygame.K_LEFT]:
+                    self.corriendo = True
+                    dx=-velocidad
+                if key[pygame.K_RIGHT]:
+                    self.corriendo = True
+                    dx=velocidad
 
+                #Salto y gravedad
+                if key[pygame.K_UP] and self.salto==False:
+                    self.salto = True
+                    self.vel_y = -25
+                
+                self.vel_y += gravedad
+                dy += self.vel_y
+
+                #Ataques
+                if key[pygame.K_o] or key[pygame.K_p]:
+                    self.atacar(superficie, objetivo)
+                    if key[pygame.K_o]:
+                        self.tipo_ataque = 1
+                    if key[pygame.K_p]:
+                        self.tipo_ataque = 2
 
 
         #Mantener al personaje dentro de la pantalla
@@ -150,12 +180,10 @@ class Personaje():
     def atacar(self, superficie, objetivo):
         if self.cooldown_ataque == 0:
             self.atacando = True
-            atacante_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.direccion) , self.rect.y, 2 * self.rect.width, self.rect.height)
+            atacante_rect = pygame.Rect(self.rect.centerx - (1 * self.rect.width * self.direccion) , self.rect.y, 1 * self.rect.width, self.rect.height)
             if atacante_rect.colliderect(objetivo.rect):
                 objetivo.vida -=5
                 objetivo.golpe = True
-        
-            pygame.draw.rect(superficie, (0, 255, 0), atacante_rect )
     
     #NUEVAS ACCIONES
     def actualizar_accion(self, nueva_accion):
@@ -168,7 +196,6 @@ class Personaje():
     #DIBUJAR LOS PERSONAJES
     def dibujar(self,superficie):
         imagen = pygame.transform.flip(self.imagen, self.direccion, False)
-        pygame.draw.rect(superficie,(255, 0, 0), self.rect)
         superficie.blit(imagen, (self.rect.x - (self.offset[0] * self.escala_imagen), self.rect.y - (self.offset[1] * self.escala_imagen)))
         
 
