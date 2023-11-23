@@ -14,14 +14,29 @@ pygame.display.set_icon(icon)
 fondo=pygame.image.load("fondos/fondo.png").convert_alpha()
 def dibujar_fondo():
     screen.blit(fondo,(0,0))
-#Colores
+
+#Colores y Fonts
 rojo = (255, 0, 0)
 amarillo = (255, 255, 0)
-blanco = (255, 255, 255)
+font = pygame.font.Font("fonts/Act_Of_Rejection.ttf", 100)
+
+#Cuenta regresiva (3, 2, 1)
+def cuenta_regresiva(intro):
+    if intro > 0:
+        #Renderizar el texto
+        text_render = font.render(f"{intro}", True, rojo)
+
+        #Posición del texto en la ventana
+        text_rect = text_render.get_rect()
+        text_rect.center = (largo // 2, alto // 2)
+
+        #Dibujar el texto en la pantalla
+        screen.blit(text_render, text_rect) 
 
 #Intro
 intro = 3
-outro_actualizacion = pygame.time.get_ticks()
+tiempo_inicial = pygame.time.get_ticks()
+
 
 
 #Cargar sprites de jugadores
@@ -42,7 +57,6 @@ jugador2_tamaño = 64
 jugador2_escala = 4
 jugador2_offset = [20, 19]
 jugador2_data = [jugador2_tamaño, jugador2_escala, jugador2_offset]
-
 
 #Barras de vida
 def dibujar_vida(vida, x, y):
@@ -77,11 +91,13 @@ while run:
         P1.mover(largo, alto, screen, P2)
         P2.mover(largo, alto, screen, P1)
     else: 
-        if (pygame.time.get_ticks() - outro_actualizacion) >= 1000:
+        if (pygame.time.get_ticks() - tiempo_inicial) >= 1000:
             intro -= 1
-            outro_actualizacion = pygame.time.get_ticks()
+            tiempo_inicial = pygame.time.get_ticks()
             print(intro)
-    
+
+    cuenta_regresiva(intro)
+
     #actualizar jugadores
     P1.actualizar()
     P2.actualizar()
@@ -95,5 +111,5 @@ while run:
         if event.type==pygame.QUIT:
             run=False
         
-        #P2.mover()
+
     pygame.display.update()
