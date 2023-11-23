@@ -3,17 +3,19 @@ from jugador import Personaje
 pygame.init()
 
 #Configuración de la ventana
-alto=600
-largo=800
-screen=pygame.display.set_mode((largo,alto)) #PANTALLA
+alto = 600
+largo = 800
+screen = pygame.display.set_mode((largo,alto)) #PANTALLA
 pygame.display.set_caption("Fight Game")
 icon = pygame.image.load("icon.png").convert_alpha()
 pygame.display.set_icon(icon)
 
 #Configuración del fondo
-fondo=pygame.image.load("fondos/fondo.png").convert_alpha()
+fondo = pygame.image.load("fondos/calle.png").convert_alpha()
+fondo_resized = pygame.transform.scale(fondo, (largo, alto-10))
+
 def dibujar_fondo():
-    screen.blit(fondo,(0,0))
+    screen.blit(fondo_resized,(0,0))
 
 #Colores y Fonts
 rojo = (255, 0, 0)
@@ -36,8 +38,6 @@ def cuenta_regresiva(intro):
 #Intro
 intro = 3
 tiempo_inicial = pygame.time.get_ticks()
-
-
 
 #Cargar sprites de jugadores
 jugador1_sheet = pygame.image.load("sprites_jugador/player_1.png")
@@ -91,11 +91,11 @@ while run:
         P1.mover(largo, alto, screen, P2)
         P2.mover(largo, alto, screen, P1)
     else: 
-        if (pygame.time.get_ticks() - tiempo_inicial) >= 1000:
+        if (pygame.time.get_ticks() - tiempo_inicial) >= 500:
             intro -= 1
             tiempo_inicial = pygame.time.get_ticks()
-            print(intro)
 
+    #cuenta regresiva
     cuenta_regresiva(intro)
 
     #actualizar jugadores

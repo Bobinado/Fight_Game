@@ -22,8 +22,9 @@ class Personaje():
         self.cooldown_ataque = 0
         self.golpe = False
         self.vivo = True
-        self.vida = 100
+        self.vida = 5
     
+    #Cargar imagenes en subsuperficies
     def cargar_imagenes(self, hoja_sprites, pasos_animacion):
         lista_animacion = []
         for y, animacion in enumerate(pasos_animacion): 
@@ -45,20 +46,25 @@ class Personaje():
 
         key=pygame.key.get_pressed()
 
-        #Solo moverse si no está atacando
-        if self.atacando == False and self.vivo == True:
-            #determinar los controles del jugador 1
-            #JUGADOR 1
+        #Solo moverse si no está atacando y está vivo (salto libre)
+        if self.vivo == True: 
+            #CONTROLES JUGADOR 1
             if self.jugador == 1: 
-                    
-                #Movimiento
-                if key[pygame.K_a]:
-                    self.corriendo = True
-                    dx=-velocidad
-                if key[pygame.K_d]:
-                    self.corriendo = True
-                    dx=velocidad
-
+                if self.atacando == False:    
+                    #Movimiento
+                    if key[pygame.K_a]:
+                        self.corriendo = True
+                        dx=-velocidad
+                    if key[pygame.K_d]:
+                        self.corriendo = True
+                        dx=velocidad
+                    #Ataques
+                    if key[pygame.K_c] or key[pygame.K_v]:
+                        self.atacar(superficie, objetivo)
+                        if key[pygame.K_c]:
+                            self.tipo_ataque = 1
+                        if key[pygame.K_v]:
+                            self.tipo_ataque = 2               
                 #Salto y gravedad
                 if key[pygame.K_w] and self.salto==False:
                     self.salto = True
@@ -67,24 +73,23 @@ class Personaje():
                 self.vel_y += gravedad
                 dy += self.vel_y
 
-                #Ataques
-                if key[pygame.K_c] or key[pygame.K_v]:
-                    self.atacar(superficie, objetivo)
-                    if key[pygame.K_c]:
-                        self.tipo_ataque = 1
-                    if key[pygame.K_v]:
-                        self.tipo_ataque = 2
-            #JUGADOR 2
+            #CONTROLES JUGADOR 2
             if self.jugador == 2: 
-                    
-                #Movimiento
-                if key[pygame.K_LEFT]:
-                    self.corriendo = True
-                    dx=-velocidad
-                if key[pygame.K_RIGHT]:
-                    self.corriendo = True
-                    dx=velocidad
-
+                if self.atacando == False:  
+                    #Movimiento
+                    if key[pygame.K_LEFT]:
+                        self.corriendo = True
+                        dx=-velocidad
+                    if key[pygame.K_RIGHT]:
+                        self.corriendo = True
+                        dx=velocidad
+                    #Ataques
+                    if key[pygame.K_o] or key[pygame.K_p]:
+                        self.atacar(superficie, objetivo)
+                        if key[pygame.K_o]:
+                            self.tipo_ataque = 1
+                        if key[pygame.K_p]:
+                            self.tipo_ataque = 2
                 #Salto y gravedad
                 if key[pygame.K_UP] and self.salto==False:
                     self.salto = True
@@ -92,14 +97,6 @@ class Personaje():
                 
                 self.vel_y += gravedad
                 dy += self.vel_y
-
-                #Ataques
-                if key[pygame.K_o] or key[pygame.K_p]:
-                    self.atacar(superficie, objetivo)
-                    if key[pygame.K_o]:
-                        self.tipo_ataque = 1
-                    if key[pygame.K_p]:
-                        self.tipo_ataque = 2
 
 
         #Mantener al personaje dentro de la pantalla
@@ -117,12 +114,13 @@ class Personaje():
         self.rect.x+=dx
         self.rect.y+=dy
 
-        #Mantener a los personajes opuestos entre sí
-        if objetivo.rect.centerx > self.rect.centerx:
-            self.direccion = False
-        else: 
-            self.direccion = True
-        
+        #Mantener a los personajes opuestos entre sí mientras estén vivos
+        if self.vivo == True: 
+            if objetivo.rect.centerx > self.rect.centerx:
+                self.direccion = False
+            else: 
+                self.direccion = True
+            
         #Cooldown de ataque
         if self.cooldown_ataque > 0:
             self.cooldown_ataque -= 1
@@ -153,7 +151,7 @@ class Personaje():
         else: 
             self.actualizar_accion(0) #Idle
 
-        animacion_cooldown = 20
+        animacion_cooldown = 30
 
         #actualiza la imagen
         self.imagen = self.lista_animacion[self.accion][self.frame_index] 
@@ -176,7 +174,8 @@ class Personaje():
                 self.golpe = False
                 self.atacando = False
                 self.cooldown_ataque = 30
-
+    
+    #Colisión de ataque
     def atacar(self, superficie, objetivo):
         if self.cooldown_ataque == 0:
             self.atacando = True
