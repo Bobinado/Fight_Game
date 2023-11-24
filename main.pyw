@@ -1,5 +1,6 @@
 import pygame
 from jugador import Personaje
+from countdown import cuenta_regresiva
 pygame.init()
 
 #Configuración de la ventana
@@ -21,19 +22,6 @@ def dibujar_fondo():
 rojo = (255, 0, 0)
 amarillo = (255, 255, 0)
 font = pygame.font.Font("fonts/Act_Of_Rejection.ttf", 100)
-
-#Cuenta regresiva (3, 2, 1)
-def cuenta_regresiva(intro):
-    if intro > 0:
-        #Renderizar el texto
-        text_render = font.render(f"{intro}", True, rojo)
-
-        #Posición del texto en la ventana
-        text_rect = text_render.get_rect()
-        text_rect.center = (largo // 2, alto // 2)
-
-        #Dibujar el texto en la pantalla
-        screen.blit(text_render, text_rect) 
 
 #Intro
 intro = 3
@@ -96,7 +84,7 @@ while run:
             tiempo_inicial = pygame.time.get_ticks()
 
     #cuenta regresiva
-    cuenta_regresiva(intro)
+    cuenta_regresiva(screen, intro, font, rojo, largo, alto)
 
     #actualizar jugadores
     P1.actualizar()
